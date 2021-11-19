@@ -13,7 +13,6 @@ using base_type = std::vector<int>;
 pair_type quadratic_sieve();
 
 base_type primes_below_bound(const int bound);
-bool is_prime(const int n, const base_type &factorbase);
 
 std::vector<pair_type> numbers_with_a_smooth_square(const base_type &factorbase);
 std::vector<int> probably_smooth_numbers(const int min_amount);
@@ -23,7 +22,6 @@ std::vector<decomp_type> factorize(std::vector<pair_type> &pairs, std::vector<de
 
 decomp_type decompose(const int number, const base_type &factorbase);
 decomp_type calc_parity(const decomp_type &decomp_type);
-int gcd(const int m, const int n);
 
 std::vector<std::vector<int>> nullspace(const std::vector<decomp_type> &parities, const int pair_count);
 
