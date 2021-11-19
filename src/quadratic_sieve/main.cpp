@@ -1,19 +1,21 @@
 #include <algorithm>
 #include <iostream>
+#include <fstream>
+#include <numeric>
 #include <string>
 #include <math.h>
-#include <fstream>
 
 #include "main.h"
+
 #include "GaussBin.h"
 
 
-const int N = 11261 * 95713;
-const int B = 500;
+const int N = 32749 * 15173;
+const int B = 70;
 
-const int PROB_SMOOTH_NUMBERS = 10000;
+const int PROB_SMOOTH_NUMBERS = 200000;
 
-char const* PARITIES_FILE = "parities.txt";
+char const* PARITIES_FILE  = "parities.txt";
 char const* NULLSPACE_FILE = "nullspace.txt";
 
 
@@ -67,7 +69,7 @@ pair_type quadratic_sieve() {
 
         // The odds of this process giving a factorization are 
         // about one half
-        const int factor = gcd(y - x, N);
+        const int factor = std::gcd(y - x, N);
         
         if (factor > 1) {
             return pair_type(factor, N / factor);
@@ -79,32 +81,29 @@ pair_type quadratic_sieve() {
 
 
 base_type primes_below_bound(const int bound) {
+    std::vector<int> numbers;
+
+    for (int i = 2; i < bound; i++) {
+        numbers.push_back(i);
+    }
+
     std::vector<int> primes;
 
-    for (int n = 2; n < bound; n++) {
-        if (is_prime(n, primes)) {
-            primes.push_back(n);
+    while (numbers.size() > 0) {
+        const int new_prime = numbers[0];
+
+        for (int i = numbers.size() - 1; i >= 1; i--) {
+            if (numbers[i] % new_prime == 0) {
+                numbers.erase(numbers.begin() + i);
+            }
         }
+
+        numbers.erase(numbers.begin());
+
+        primes.push_back(new_prime);
     }
 
     return primes;
-}
-
-
-bool is_prime(const int n, const base_type &factorbase) {
-    const int n_sqrt = sqrt(n);
-
-    for (const int prime : factorbase) {
-        if (n % prime == 0) {
-            return false;
-        }
-
-        if (prime >= n_sqrt) {
-            return true;
-        }
-    }
-
-    return true;
 }
 
 
@@ -203,19 +202,6 @@ decomp_type decompose(const int number, const base_type &factorbase) {
 }
 
 
-int gcd(const int m, const int n) {
-    if (m == 0) {
-        return n;
-    }
-
-    if (n == 0) {
-        return m;
-    }
-
-    return gcd(n, m % n);
-}
-
-
 std::vector<std::vector<int>> nullspace(const std::vector<decomp_type> &parities, const int pair_count) {
 
     const int factorbase_size = parities[0].size();
@@ -246,16 +232,19 @@ std::vector<std::vector<int>> nullspace(const std::vector<decomp_type> &parities
     int length;
     ifile >> length;
 
-    std::vector<std::vector<int>> solutions(length);
+    std::vector<std::vector<int>> solutions;
+    solutions.reserve(length);
 
     for (int i = 0; i < length; i++) {
-        std::vector<int> solution(pair_count);
+        std::vector<int> solution;
         
         for (int j = 0; j < pair_count; j++) {
-            ifile >> solution[j];
+            int value;
+            ifile >> value;
+            solution.push_back(value);
         }
 
-        solutions[i] = solution;
+        solutions.push_back(solution);
     }
 
     ifile.close();
