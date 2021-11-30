@@ -1,6 +1,17 @@
-def trial_division(n)
-    primes = primes_below_bound(Math.sqrt(n))
-    is_prime(n, primes)
+def trial_division1(n) 
+    n_sqrt = Math.sqrt(n).to_i
+
+    2.upto(n_sqrt).each{ |number|
+        if n % number == 0
+            return false
+        end
+    }
+
+    true
+end
+
+def trial_division2(n)
+    is_prime(n, $primes)
 end
 
 def primes_below_bound(bound)
@@ -41,3 +52,15 @@ def is_prime(n, primes)
 
     true
 end
+
+N = 13881737 * 27453061
+
+$primes = primes_below_bound(Math.sqrt(N))
+
+s = Time.new
+puts trial_division1(N)
+puts Time.new - s
+
+s = Time.new
+puts trial_division2(N)
+puts Time.new - s
