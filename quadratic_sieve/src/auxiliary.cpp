@@ -31,19 +31,23 @@ std::vector<int> primes_below_bound(const int bound) {
 
 
 LongInt gcd(LongInt m, LongInt n) {
+    LongInt p = m;
+    LongInt q = n;
+    
+    while (p != 0 && q != 0) {
+        LongInt aux = p;
 
-    if (m == 0) {
-        return n;
+        p = q;
+        q = aux % q;
     }
 
-    if (n == 0) {
-        return m;
+    if (p == 0) {
+        return q;
     }
-
-    LongInt new_m = n;
-    LongInt new_n = m % n;
-
-    return gcd(new_m, new_n);
+    
+    if (q == 0) {
+        return p;
+    }
 }
 
 
